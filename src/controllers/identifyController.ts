@@ -130,7 +130,7 @@ export const identifyContact = async (
       secondaryContacts
     );
     res
-      .status(201)
+      .status(200)
       .json(transformedContacts);
   } catch (error) {
     console.error("Error creating contact:", error);
@@ -139,23 +139,26 @@ export const identifyContact = async (
 };
 
 const trasnformContacts = (
-  primaryContact: Contact,
-  secondaryContacts: Contact[]
-) => {
-  const emails: string[] = [primaryContact.email!];
-  const phoneNumbers: string[] = [primaryContact.phoneNumber!];
-  const secondaryContactIds: number[] = [];
-  secondaryContacts.forEach((contact: Contact) => {
-    if (contact.email) emails.push(contact.email);
-    if (contact.phoneNumber) phoneNumbers.push(contact.phoneNumber);
-    secondaryContactIds.push(contact.id);
-  });
-  return {
-    contact: {
-      primaryContatctId: primaryContact.id,
-      emails,
-      phoneNumbers,
-      secondaryContactIds,
-    },
+    primaryContact: Contact,
+    secondaryContacts: Contact[]
+  ) => {
+    const emails: Set<string> = new Set([primaryContact.email!]);
+    const phoneNumbers: Set<string> = new Set([primaryContact.phoneNumber!]);
+    const secondaryContactIds: Set<number> = new Set();
+  
+    secondaryContacts.forEach((contact: Contact) => {
+      if (contact.email) emails.add(contact.email);
+      if (contact.phoneNumber) phoneNumbers.add(contact.phoneNumber);
+      secondaryContactIds.add(contact.id);
+    });
+  
+    return {
+      contact: {
+        primaryContatctId: primaryContact.id,
+        emails: Array.from(emails),
+        phoneNumbers: Array.from(phoneNumbers),
+        secondaryContactIds: Array.from(secondaryContactIds),
+      },
+    };
   };
-};
+  
