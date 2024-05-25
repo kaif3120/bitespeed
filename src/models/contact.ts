@@ -3,18 +3,13 @@ import { Model, Optional, DataTypes } from "sequelize";
 import {sequelize} from ".";
 import { Contact as ContactInterface } from "../interfaces/contact";
 
-interface Contact {
-  id: string;
-  title: string;
-  numberOfPages: number;
-  authorId: string;
-}
 
-interface ContactCreation extends Optional<Contact, "id"> {}
+
+interface ContactCreation extends Optional<ContactInterface, "id"> {}
 
 interface ContactInstance
   extends Model<ContactInterface, ContactCreation>,
-    Contact {}
+    ContactInterface {}
 
 const Contact = sequelize.define<ContactInstance>("Contact", {
   id: {

@@ -2,7 +2,9 @@ import express, { Request, Response, NextFunction } from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
-import { sequelize } from "./models";
+import ContactModel from "./models/contact";
+import { sequelize } from "./models/";
+import identifyRouter from './routes/identifyRoute';
 
 const app = express();
 
@@ -11,12 +13,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+
+// Use the contactRouter for /contacts requests
+app.use('/identify', identifyRouter);
+
+
 app.get("/syncDB", (req: Request, res: Response, next: NextFunction) => {
   if ((process.env.NODE_ENV || "development") === "development") {
     return sequelize
       .authenticate()
       .then(() =>
-        sequelize.sync({
+        ContactModel.sync({
           force: false,
         })
       )
@@ -38,6 +45,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // error handler
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   // set locals, only providing error in development
+  console.log(err)
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
   // render the error page
