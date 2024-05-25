@@ -1,0 +1,91 @@
+openapi: 3.0.0
+info:
+  title: Identify Contact API
+  version: 1.0.0
+  contact:
+    email: shaikhkaif3120@gmail.com
+  description: API to identify contacts based on email and phone number
+
+servers:
+  - url: https://bitespeed-latest.onrender.com
+  - url: http://localhost:3000
+
+paths:
+  /identify:
+    post:
+      tags:
+      - identify
+      summary: Identify contact based on email and phone number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Email address of the contact (optional)
+                phoneNumber:
+                  type: string
+                  description: Phone number of the contact (optional)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  contact:
+                    type: object
+                    properties:
+                      primaryContactId:
+                        type: integer
+                        description: ID of the primary contact
+                      emails:
+                        type: array
+                        items:
+                          type: string
+                        description: List of email addresses associated with the contact
+                      phoneNumbers:
+                        type: array
+                        items:
+                          type: string
+                        description: List of phone numbers associated with the contact
+                      secondaryContactIds:
+                        type: array
+                        items:
+                          type: integer
+                        description: List of IDs of secondary contacts
+        '400':
+          description: Bad request, validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message describing the validation error
+        '404':
+          description: No records found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    description: Error message indicating no records were found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Error message indicating an internal server error occurred

@@ -5,6 +5,12 @@ import logger from "morgan";
 import ContactModel from "./models/contact";
 import { sequelize } from "./models/";
 import identifyRouter from './routes/identifyRoute';
+import swaggerUi from "swagger-ui-express"
+import YAML from "yamljs"; 
+import cors from 'cors';
+
+// Import routes and helpers
+const swaggerDocument = YAML.load("./swagger.yaml");
 
 const app = express();
 
@@ -13,8 +19,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+// Enable CORS for all routes
+app.use(cors({ origin: "*" }));
 
 // Use the contactRouter for /contacts requests
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use('/identify', identifyRouter);
 
 
